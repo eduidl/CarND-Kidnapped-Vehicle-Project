@@ -1,10 +1,8 @@
 #include <uWS/uWS.h>
 #include <iostream>
 #include "json.hpp"
-#include <math.h>
+#include <cmath>
 #include "particle_filter.h"
-
-using namespace std;
 
 // for convenience
 using json = nlohmann::json;
@@ -38,7 +36,7 @@ int main() {
   // Read map data
   Map map;
   if (!read_map_data("../data/map_data.txt", map)) {
-    cout << "Error: Could not open map file" << endl;
+    std::cout << "Error: Could not open map file" << std::endl;
     return -1;
   }
 
@@ -76,9 +74,9 @@ int main() {
 
           // receive noisy observation data from the simulator
           // sense_observations in JSON format [{obs_x,obs_y},{obs_x,obs_y},...{obs_x,obs_y}]
-          vector<LandmarkObs> noisy_observations;
-          string sense_observations_x = j[1]["sense_observations_x"];
-          string sense_observations_y = j[1]["sense_observations_y"];
+          std::vector<LandmarkObs> noisy_observations;
+          std::string sense_observations_x = j[1]["sense_observations_x"];
+          std::string sense_observations_y = j[1]["sense_observations_y"];
 
           std::vector<float> x_sense;
           std::istringstream iss_x(sense_observations_x);
@@ -94,7 +92,7 @@ int main() {
           std::istream_iterator<float>(),
           std::back_inserter(y_sense));
 
-          for (int i = 0; i < x_sense.size(); i++) {
+          for (size_t i = 0; i < x_sense.size(); i++) {
             LandmarkObs obs;
             obs.x = x_sense[i];
             obs.y = y_sense[i];
@@ -106,7 +104,7 @@ int main() {
           pf.resample();
 
           // Calculate and output the average weighted error of the particle filter over all time steps so far.
-          vector<Particle> particles = pf.particles;
+          std::vector<Particle> particles = pf.particles;
           int num_particles = particles.size();
           double highest_weight = -1.0;
           Particle best_particle;
@@ -120,8 +118,8 @@ int main() {
             weight_sum += particles[i].weight;
           }
 
-          cout << "highest w " << highest_weight << endl;
-          cout << "average w " << weight_sum/num_particles << endl;
+          std::cout << "highest w " << highest_weight << std::endl;
+          std::cout << "average w " << weight_sum/num_particles << std::endl;
 
           json msgJson;
           msgJson["best_particle_x"] = best_particle.x;
